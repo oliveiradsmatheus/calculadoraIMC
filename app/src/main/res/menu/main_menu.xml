@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Resetar formulário" />
-    <item android:title="Consultar histórico" />
-    <item android:title="Sair" />
+    <item
+        android:id="@+id/resetar"
+        android:title="Resetar formulário" />
+    <item
+        android:id="@+id/historico"
+        android:title="Consultar histórico" />
+    <item
+        android:id="@+id/sair"
+        android:title="Sair" />
 </menu>

@@ -1,6 +1,10 @@
 package matheus.bcc.calculadoraimc;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +12,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.Locale;
+
 public class IMCActivity extends AppCompatActivity {
+    TextView tvNome, tvIMC, tvCondicao;
+    String nome;
+    char sexo;
+    double imc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +30,47 @@ public class IMCActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Window janela = this.getWindow();
+        janela.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        tvNome = findViewById(R.id.tvNome);
+        tvIMC = findViewById(R.id.tvIMC);
+        tvCondicao = findViewById(R.id.tvCondicao);
+
+        nome = getIntent().getStringExtra("nome");
+        sexo = getIntent().getCharExtra("sexo", 'm');
+        imc = getIntent().getDoubleExtra("imc",0);
+
+        tvNome.setText(String.format("Olá " + nome));
+        tvIMC.setText(String.format(Locale.getDefault(), "Seu IMC é %.2f", imc));
+        String texto;
+        if (sexo == 'm')
+            if (imc < 20.7)
+                texto = "Você está abaixo do peso";
+            else if (imc < 26.4)
+                texto = "Você está no peso normal";
+            else if (imc < 27.8)
+                texto = "Você está marginalmente acima do peso";
+            else if (imc < 31.1)
+                texto = "Você está acima do peso ideal";
+            else
+                texto = "Você está obeso";
+        else
+            if (imc < 19.1)
+                texto = "Você está abaixo do peso";
+            else if (imc < 25.8)
+                texto = "Você está no peso normal";
+            else if (imc < 27.3)
+                texto = "Você está marginalmente acima do peso";
+            else if (imc < 32.3)
+                texto = "Você está acima do peso ideal";
+            else
+                texto = "Você está obeso";
+        tvCondicao.setText(texto);
+    }
+
+    private void calcularIMC() {
+        Intent intent = new Intent(this, IMCActivity.class);
+        startActivity(intent);
     }
 }

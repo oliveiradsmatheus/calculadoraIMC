@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Base.Theme.CalculadoraIMC" parent="Theme.AppCompat">
         <item name="fontFamily">@font/ubuntu</item>
         <item name="android:colorBackground">@color/fundo</item>
@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/fundo</item>
         <item name="android:colorForeground">@color/fundo</item>
         <item name="android:textColorPrimary">@color/texto_claro</item>
+        <item name="android:textColorHint">@color/texto</item>
     </style>
 
     <style name="Theme.CalculadoraIMC" parent="Base.Theme.CalculadoraIMC" />

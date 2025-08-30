@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CalculadoraIMC">
         <activity
+            android:name=".HistoricoActivity"
+            android:exported="false" />
+        <activity
             android:name=".IMCActivity"
             android:exported="false" />
         <activity

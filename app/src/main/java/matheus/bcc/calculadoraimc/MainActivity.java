@@ -1,6 +1,8 @@
 package matheus.bcc.calculadoraimc;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,8 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,12 +25,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    TextInputEditText tiNome;
     TextView tvPeso, tvAltura;
     SeekBar sbPeso, sbAltura;
-    int peso, altura;
+    Button btCalcular;
+    RadioGroup rgSexo;
+    RadioButton rbMasc, rbFem;
+    String nome;
+    char sexo;
+    int peso;
+    double altura;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -42,21 +57,42 @@ public class MainActivity extends AppCompatActivity {
         Window janela = this.getWindow();
         janela.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getSupportActionBar().setBackgroundDrawable(
-                new ColorDrawable(ContextCompat.getColor(this, R.color.white))
+                new ColorDrawable(ContextCompat.getColor(this, R.color.fundo))
         );
 
+        tiNome = findViewById(R.id.tiNome);
         sbPeso = findViewById(R.id.sbPeso);
-
+        sbAltura = findViewById(R.id.sbAltura);
         tvPeso = findViewById(R.id.tvPeso);
+        tvAltura = findViewById(R.id.tvAltura);
+        rgSexo = findViewById(R.id.rgSexo);
+        rbMasc = findViewById(R.id.rbMasc);
+        rbFem = findViewById(R.id.rbFem);
+        btCalcular = findViewById(R.id.btCalcular);
 
-        peso = 500;
-        sbPeso.setProgress(peso/10);
-        tvPeso.setText(String.format( "%d", peso));
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+
+        nome = sharedPreferences.getString("nome", "");
+        tiNome.setText(nome);
+
+        sexo = (char) sharedPreferences.getInt("sexo", 'm');
+        if (sexo == 'm')
+            rbMasc.setChecked(true);
+        else
+            rbFem.setChecked(true);
+
+        peso = sharedPreferences.getInt("peso", 50);
+        sbPeso.setProgress(peso * 10);
+        tvPeso.setText(String.format(Locale.getDefault(), "%d", peso));
+
+        altura = sharedPreferences.getFloat("altura", 1.70f);
+        sbAltura.setProgress((int)(altura*100));
+        tvAltura.setText(String.format(Locale.getDefault(), "%.2f", altura));
 
         sbPeso.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tvPeso.setText(String.format( "%d", peso));
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                tvPeso.setText(String.format(Locale.getDefault(), "%d", i/10));
             }
 
             @Override
@@ -69,13 +105,61 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        sbAltura.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                tvAltura.setText(String.format("%s", i / 100.0));
+            }
 
-        /*sbJuros.setProgress((int)(juros*100));
-        tvJuros.setText(String.format(Locale.getDefault(), "%.2f", juros));
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-        prazo = sharedPreferences.getInt("prazo", 12);
-        sbPrazo.setProgress(prazo);
-        tvPrazo.setText(String.format(Locale.getDefault(), "%d", prazo));*/
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        rgSexo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull RadioGroup group, int id) {
+                if (id == R.id.rbMasc)
+                    sexo = 'm';
+                else if (id == R.id.rbFem)
+                    sexo = 'f';
+            }
+        });
+
+        btCalcular.setOnClickListener(e -> trocarActivity());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("nome", nome);
+        editor.putInt("sexo", sexo);
+        editor.putInt("peso", peso);
+        editor.putFloat("altura", (float) altura);
+        editor.apply(); // Interface diz que .commit está depreciado.
+    }
+
+    private void trocarActivity() {
+        Intent intent = new Intent(this, IMCActivity.class);
+        double imc = calcularIMC();
+        intent.putExtra("nome", String.valueOf(tiNome.getText()));
+        intent.putExtra("sexo", sexo);
+        intent.putExtra("imc", imc);
+        startActivity(intent);
+    }
+
+    private double calcularIMC() {
+        peso = sbPeso.getProgress()/10;
+        altura = sbAltura.getProgress()/100.0;
+
+        return peso/(altura*altura);
     }
 
     @Override
@@ -87,6 +171,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.resetar) {
+            Toast.makeText(this, "Dados resetados!", Toast.LENGTH_LONG).show();
+            resetarFormulario();
+        } else if (item.getItemId() == R.id.historico) {
+            visualizarHistorico();
+        } else if (item.getItemId() == R.id.sair)
+            finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    private void resetarFormulario() {
+        tiNome.setText("");
+        tvPeso.setText(String.format(Locale.getDefault(), "%d", 50));
+        sbPeso.setProgress(500);
+        tvAltura.setText(String.format("%s", 1.50));
+        sbAltura.setProgress(150);
+        rbMasc.setChecked(false);
+        rbFem.setChecked(false);
+    }
+
+    private void visualizarHistorico() {
+        Intent intent = new Intent(this, HistoricoActivity.class);
+        startActivity(intent);
     }
 }
