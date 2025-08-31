@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +28,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -137,13 +143,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("nome", nome);
-        editor.putInt("sexo", sexo);
-        editor.putInt("peso", peso);
-        editor.putFloat("altura", (float) altura);
-        editor.apply(); // Interface diz que .commit está depreciado.
+        try {
+            FileOutputStream fileOutputStream;
+            ObjectOutputStream objectOutputStream;
+            fileOutputStream = openFileOutput("dados.dat", MODE_PRIVATE);
+            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(Singleton.historicoList);
+            objectOutputStream.close();
+        }catch (Exception  e){
+            Log.e("erroxxx",e.getMessage());
+        }
     }
 
     private void trocarActivity() {
@@ -151,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
         double imc = calcularIMC();
         intent.putExtra("nome", String.valueOf(tiNome.getText()));
         intent.putExtra("sexo", sexo);
+        intent.putExtra("peso",peso);
+        intent.putExtra("altura",altura);
         intent.putExtra("imc", imc);
         startActivity(intent);
     }
