@@ -76,11 +76,10 @@ public class MainActivity extends AppCompatActivity {
         rbFem = findViewById(R.id.rbFem);
         btCalcular = findViewById(R.id.btCalcular);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
         nome = sharedPreferences.getString("nome", "");
         tiNome.setText(nome);
-
         sexo = (char) sharedPreferences.getInt("sexo", 'm');
         if (sexo == 'm')
             rbMasc.setChecked(true);
@@ -143,6 +142,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        // Pega os valores mais recentes da tela
+        nome = tiNome.getText().toString();
+        peso = Integer.parseInt(tvPeso.getText().toString());
+        altura = Float.parseFloat(tvAltura.getText().toString());
+        // Sexo já é atualizado pelo RadioGroup
+
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("nome", nome);
+        editor.putInt("sexo", sexo);
+        editor.putInt("peso", peso);
+        editor.putFloat("altura", (float) altura);
+        editor.apply(); // Interface diz que .commit está depreciado.
         try {
             FileOutputStream fileOutputStream;
             ObjectOutputStream objectOutputStream;

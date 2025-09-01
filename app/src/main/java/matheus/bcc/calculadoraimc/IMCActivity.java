@@ -87,7 +87,8 @@ public class IMCActivity extends AppCompatActivity {
         // Formata data
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        Singleton.historicoList.add(new Usuario(nome,
+        Singleton.historicoList.add(new Usuario(
+                nome,
                 dataAtual.format(formato),
                 tvCondicao.getText().toString(),
                 sexo,
