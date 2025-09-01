@@ -3,13 +3,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="fundo">#564592</color>
+    <color name="fundo">#003049</color>
     <color name="fundo_card">#ebebeb</color>
 
-    <color name="botao">#c33c54</color>
+    <color name="botao">#d1495b</color>
     <color name="texto_discreto">#ff6700</color>
     <color name="verde">#1f7a8c</color>
 
-    <color name="texto">#240046</color>
+    <color name="texto">#003049</color>
     <color name="texto_claro">#ebebeb</color>
 </resources>
