@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         // Pega os valores mais recentes da tela
-        /*nome = tiNome.getText().toString();
-        peso = Integer.parseInt(tvPeso.getText().toString());
+        nome = tiNome.getText().toString();
+        /*peso = Integer.parseInt(tvPeso.getText().toString());
         altura = Float.parseFloat(tvAltura.getText().toString());*/
         // Sexo já é atualizado pelo RadioGroup
 
