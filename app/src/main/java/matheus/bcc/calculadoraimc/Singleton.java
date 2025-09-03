@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Singleton {
 
-    public static List<Usuario> historicoList=new ArrayList<>();
+    public static List<Usuario> historicoList = new ArrayList<>();
 
     private Singleton() {
     }

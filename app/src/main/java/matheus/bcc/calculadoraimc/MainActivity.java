@@ -28,8 +28,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -134,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btCalcular.setOnClickListener(e -> trocarActivity());
+
+        lerHistorico();
     }
 
     @Override
@@ -216,5 +221,16 @@ public class MainActivity extends AppCompatActivity {
     private void visualizarHistorico() {
         Intent intent = new Intent(this, HistoricoActivity.class);
         startActivity(intent);
+    }
+
+    private void lerHistorico() {
+        try {
+            FileInputStream fileInputStream = openFileInput("dados.dat");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Singleton.historicoList = (List<Usuario>) objectInputStream.readObject();
+            objectInputStream.close();
+        } catch (Exception e) {
+            Log.e("Erro de leitura: ", e.getMessage());
+        }
     }
 }
