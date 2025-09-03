@@ -28,11 +28,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         sbPeso.setProgress(peso * 10);
         tvPeso.setText(String.format(Locale.getDefault(), "%d", peso));
 
-        altura = sharedPreferences.getFloat("altura", 1.70f);
+        altura = sharedPreferences.getFloat("altura", (float) 1.70);
         sbAltura.setProgress((int)(altura*100));
         tvAltura.setText(String.format(Locale.getDefault(), "%.2f", altura));
 
@@ -144,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         // Pega os valores mais recentes da tela
-        nome = tiNome.getText().toString();
+        /*nome = tiNome.getText().toString();
         peso = Integer.parseInt(tvPeso.getText().toString());
-        altura = Float.parseFloat(tvAltura.getText().toString());
+        altura = Float.parseFloat(tvAltura.getText().toString());*/
         // Sexo já é atualizado pelo RadioGroup
 
         SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
@@ -164,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             objectOutputStream.writeObject(Singleton.historicoList);
             objectOutputStream.close();
         }catch (Exception  e){
-            Log.e("erroxxx",e.getMessage());
+            Log.e("Erro: ",e.getMessage());
         }
     }
 
@@ -182,7 +179,8 @@ public class MainActivity extends AppCompatActivity {
     private double calcularIMC() {
         peso = sbPeso.getProgress()/10;
         altura = sbAltura.getProgress()/100.0;
-
+        if (altura == 0)
+            return 0;
         return peso/(altura*altura);
     }
 
